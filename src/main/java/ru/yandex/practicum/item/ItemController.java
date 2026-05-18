@@ -1,9 +1,11 @@
 package ru.yandex.practicum.item;
 
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+
 import java.util.List;
 
 @RestController
@@ -13,7 +15,9 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping
-    public List<ItemDto> findByOwnerId(@RequestHeader("X-Sharer-User-Id") Long ownerId) {
+    public List<ItemDto> findByOwnerId(@RequestHeader("X-Sharer-User-Id")
+                                       @Positive(message = "User Id should be positive")
+                                           Long ownerId) {
         return itemService.findByOwnerId(ownerId);
     }
 
@@ -24,13 +28,17 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long ownerId,
+    public ItemDto create(@RequestHeader("X-Sharer-User-Id")
+                              @Positive(message = "User Id should be positive")
+                              Long ownerId,
                           @Valid @RequestBody ItemDto itemDto) {
         return itemService.create(ownerId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto update(@RequestHeader("X-Sharer-User-Id") Long ownerId,
+    public ItemDto update(@RequestHeader("X-Sharer-User-Id")
+                              @Positive(message = "User Id should be positive")
+                              Long ownerId,
                           @PathVariable Long itemId,
                           @RequestBody ItemDto itemDto) {
         return itemService.update(ownerId, itemId, itemDto);

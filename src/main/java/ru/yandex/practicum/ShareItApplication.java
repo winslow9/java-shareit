@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  Это нужно для checkStyle
  */
 @SpringBootApplication
-public final class ShareItApplication {
+public class ShareItApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(ShareItApplication.class, args);
