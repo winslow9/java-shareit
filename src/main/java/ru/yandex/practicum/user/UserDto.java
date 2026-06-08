@@ -1,5 +1,6 @@
 package ru.yandex.practicum.user;
 
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class UserDto {
     private Long id;
 

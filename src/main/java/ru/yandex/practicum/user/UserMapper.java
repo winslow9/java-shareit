@@ -22,11 +22,13 @@ public class UserMapper {
         if (userDto == null) {
             return null;
         }
-        return new User(
-                userDto.getId(),
-                userDto.getName(),
-                userDto.getEmail()
-        );
+
+        User user = new User();
+        user.setId(userDto.getId());
+        user.setName(userDto.getName());
+        user.setEmail(userDto.getEmail());
+
+        return user;
     }
 
     public void updateEntity(User existing, UserDto updates) {

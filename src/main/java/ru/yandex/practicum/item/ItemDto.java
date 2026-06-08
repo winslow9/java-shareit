@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class ItemDto {
     private Long id;
 

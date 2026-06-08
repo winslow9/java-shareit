@@ -28,6 +28,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getEntityById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
+    }
+
+    @Override
     public UserDto create(UserDto userDto) {
         if (repository.existsByEmail(userDto.getEmail())) {
             throw new ConflictException("User with email " + userDto.getEmail() + " already exists");
@@ -47,7 +53,7 @@ public class UserServiceImpl implements UserService {
         }
 
         mapper.updateEntity(existing, userDto);
-        return mapper.toDto(repository.update(existing));
+        return mapper.toDto(repository.save(existing));
     }
 
     @Override
@@ -57,4 +63,6 @@ public class UserServiceImpl implements UserService {
         }
         repository.deleteById(id);
     }
+
+
 }

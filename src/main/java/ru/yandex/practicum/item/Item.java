@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import ru.yandex.practicum.user.User;
 
 @Entity
 @Table(name = "items")
@@ -28,6 +29,7 @@ public class Item {
     @Column(name = "available", nullable = false)
     private Boolean available;
 
-    @Column(name = "owner_id", nullable = false)
-    private Long ownerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
 }
