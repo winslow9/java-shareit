@@ -4,13 +4,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
 
@@ -66,4 +65,62 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     // Поиск по ID с проверкой прав
     @Query("SELECT b FROM Booking b WHERE b.id = :id AND (b.booker.id = :userId OR b.item.owner.id = :userId)")
     Optional<Booking> findByIdAndUserId(@Param("id") Long id, @Param("userId") Long userId);
+
+    @Query("SELECT b FROM Booking b WHERE b.item.id IN :itemIds " +
+            "AND b.status = :status " +
+            "AND b.start < :now " +
+            "AND b.start = (SELECT MAX(b2.start) FROM Booking b2 " +
+            "                    WHERE b2.item.id = b.item.id " +
+            "                    AND b2.status = :status " +
+            "                    AND b2.start < :now)")
+    List<Booking> findLastBookingsForItems(@Param("itemIds") List<Long> itemIds,
+                                           @Param("status") BookingStatus status,
+                                           @Param("now") LocalDateTime now);
+
+    @Query("SELECT b FROM Booking b WHERE b.item.id IN :itemIds " +
+            "AND b.status = :status " +
+            "AND b.start > :now " +
+            "AND b.start = (SELECT MIN(b2.start) FROM Booking b2 " +
+            "                    WHERE b2.item.id = b.item.id " +
+            "                    AND b2.status = :status " +
+            "                    AND b2.start > :now)")
+    List<Booking> findNextBookingsForItems(@Param("itemIds") List<Long> itemIds,
+                                           @Param("status") BookingStatus status,
+                                           @Param("now") LocalDateTime now);
+
+    @Query("SELECT b FROM Booking b WHERE b.item.id IN :itemIds " +
+            "AND b.status = :status " +
+            "AND b.start < :now " +
+            "ORDER BY b.item.id, b.start DESC")
+    List<Booking> findAllLastBookingsForItems(@Param("itemIds") List<Long> itemIds,
+                                              @Param("status") BookingStatus status,
+                                              @Param("now") LocalDateTime now);
+
+    @Query("SELECT b FROM Booking b WHERE b.item.id IN :itemIds " +
+            "AND b.status = :status " +
+            "AND b.start > :now " +
+            "ORDER BY b.item.id, b.start ASC")
+    List<Booking> findAllNextBookingsForItems(@Param("itemIds") List<Long> itemIds,
+                                              @Param("status") BookingStatus status,
+                                              @Param("now") LocalDateTime now);
+
+    @Query(value = "SELECT DISTINCT ON (b.item_id) b.* FROM bookings b " +
+            "WHERE b.item_id IN (:itemIds) " +
+            "AND b.status = :status " +
+            "AND b.start_date < :now " +
+            "ORDER BY b.item_id, b.start_date DESC",
+            nativeQuery = true)
+    List<Booking> findLastBookingsForItemsNative(@Param("itemIds") List<Long> itemIds,
+                                                 @Param("status") String status,
+                                                 @Param("now") LocalDateTime now);
+
+    @Query(value = "SELECT DISTINCT ON (b.item_id) b.* FROM bookings b " +
+            "WHERE b.item_id IN (:itemIds) " +
+            "AND b.status = :status " +
+            "AND b.start_date > :now " +
+            "ORDER BY b.item_id, b.start_date ASC",
+            nativeQuery = true)
+    List<Booking> findNextBookingsForItemsNative(@Param("itemIds") List<Long> itemIds,
+                                                 @Param("status") String status,
+                                                 @Param("now") LocalDateTime now);
 }
