@@ -26,7 +26,7 @@ public class ItemController {
     public ResponseEntity<Collection<ItemWithDatesDto>> getItems(
             @RequestHeader("X-Sharer-User-Id") long userId,
             @RequestParam(name = "from", defaultValue = "0") Integer from,
-            @RequestParam(name = "size", defaultValue = "10") Integer size){
+            @RequestParam(name = "size", defaultValue = "10") Integer size) {
 
         log.info("Get items with userId={}, from={}, size={}", userId, from, size);
         return ResponseEntity.ok(itemService.findAll(userId));
@@ -45,7 +45,7 @@ public class ItemController {
     public ResponseEntity<Collection<Item>> getItemsByText(
             @RequestParam(name = "text", defaultValue = "") String text,
             @RequestParam(name = "from", defaultValue = "0") Integer from,
-            @RequestParam(name = "size", defaultValue = "10") Integer size){
+            @RequestParam(name = "size", defaultValue = "10") Integer size) {
 
         log.info("Search items with text={}, from={}, size={}", text, from, size);
         return ResponseEntity.ok(itemService.findByText(text));
@@ -74,7 +74,7 @@ public class ItemController {
     public ResponseEntity<Comment> saveComment(
             @RequestHeader("X-Sharer-User-Id") long userId,
             @PathVariable Long itemId,
-            @RequestBody  CommentDto commentDto) {
+            @RequestBody CommentDto commentDto) {
 
         log.info("Post comment to item={}, userId={}", itemId, userId);
         return ResponseEntity.ok(itemService.addComment(itemId, userId, commentDto));
