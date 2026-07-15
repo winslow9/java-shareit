@@ -41,17 +41,6 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new NotFoundException("Пользователь с id=" + userId + " не найден"));
         Item item = ItemMapper.toItem(itemDto);
 
-        if (item.getName() == null || item.getName().isBlank()) {
-            throw new ValidationException("Название вещи не может быть пустым");
-        }
-
-        if (item.getDescription() == null || item.getDescription().isBlank()) {
-            throw new ValidationException("Описание вещи не может быть пустым");
-        }
-
-        if (item.getAvailable() == null) {
-            throw new ValidationException("Статус доступности должен быть указан");
-        }
 
         if (itemDto.getRequestId() != null) {
             item.setRequest(itemRequestRepository.findById(itemDto.getRequestId())
@@ -137,15 +126,9 @@ public class ItemServiceImpl implements ItemService {
         User author = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь с id=" + userId + " не найден"));
 
-        if (commentDto.getText() == null || commentDto.getText().isBlank()) {
-            throw new ValidationException("Текст комментария не может быть пустым");
-        }
 
         boolean volidateComment = bookingRepository.existsByItemIdAndBookerIdAndStatusAndEndBefore(itemId, userId, BookingStatus.APPROVED, LocalDateTime.now());
 
-        if (!volidateComment) {
-            throw new ValidationException("Оставить комментарий можно только после завершённого бронирования");
-        }
 
         Comment comment = CommentMapper.toComment(commentDto);
 

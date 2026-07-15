@@ -29,7 +29,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public User saveUser(User user) {
-        validateEmail(user.getEmail());
 
         boolean emailExists = userRepository.findAll().stream()
                 .anyMatch(existingUser -> existingUser.getEmail().equals(user.getEmail()));
@@ -45,7 +44,6 @@ public class UserServiceImpl implements UserService {
     public User updateUser(Long id, User user) {
         if (user.getEmail() != null) {
 
-            validateEmail(user.getEmail());
 
             boolean emailExists = userRepository.findAll().stream()
                     .filter(existingUser -> existingUser.getEmail().equals(user.getEmail()))
@@ -73,13 +71,4 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
-    private void validateEmail(String email) {
-        if (email == null || email.isBlank()) {
-            throw new ValidationException("Email не может быть пустым");
-        }
-
-        if (!email.contains("@")) {
-            throw new ValidationException("Некорректный email");
-        }
-    }
 }
