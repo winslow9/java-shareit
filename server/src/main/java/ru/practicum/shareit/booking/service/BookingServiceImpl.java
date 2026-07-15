@@ -8,8 +8,8 @@ import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.User;
@@ -33,9 +33,6 @@ public class BookingServiceImpl implements BookingService {
         Item item = itemRepository.findById(bookingCreateDto.getItemId())
                 .orElseThrow(() -> new NotFoundException("Вещь с id=" + bookingCreateDto.getItemId() + " не найдена"));
 
-        if (!item.getAvailable()) {
-            throw new ValidationException("Вещь недоступна для бронирования");
-        }
 
         if (item.getOwner().getId().equals(userId)) {
             throw new NotFoundException("Владелец не может бронировать свою вещь");
@@ -58,13 +55,6 @@ public class BookingServiceImpl implements BookingService {
 
         Long ownerId = booking.getItem().getOwner().getId();
 
-        if (!ownerId.equals(userId)) {
-            throw new ValidationException("Подтвердить бронирование может только владелец вещи");
-        }
-
-        if (booking.getStatus() != BookingStatus.WAITING) {
-            throw new ValidationException("Бронирование уже обработано");
-        }
 
         if (approved) {
             booking.setStatus(BookingStatus.APPROVED);
@@ -119,7 +109,7 @@ public class BookingServiceImpl implements BookingService {
             case "REJECTED" -> {
                 return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED);
             }
-            default -> throw new ValidationException("Unknown state: " + state);
+            default -> throw new ConflictException("Unknown state: " + state);
         }
     }
 
@@ -150,7 +140,7 @@ public class BookingServiceImpl implements BookingService {
             case "REJECTED" -> {
                 return bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(ownerId, BookingStatus.REJECTED);
             }
-            default -> throw new ValidationException("Unknown state: " + state);
+            default -> throw new ConflictException("Unknown state: " + state);
         }
     }
 }
