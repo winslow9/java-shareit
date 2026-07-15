@@ -6,8 +6,18 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.3.2</version>
-        <relativePath/>
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
+    <properties>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <lombok.version>1.18.36</lombok.version> <!-- Обновлено до 1.18.36 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <checkstyle.version>3.3.1</checkstyle.version>
+        <spotbugs.version>4.8.5.0</spotbugs.version>
+        <jacoco.version>0.8.12</jacoco.version>
+    </properties>
 
     <groupId>ru.practicum</groupId>
     <artifactId>shareit</artifactId>
@@ -20,15 +30,6 @@
         <module>gateway</module>
     </modules>
 
-    <properties>
-        <java.version>21</java.version>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <checkstyle.version>3.3.1</checkstyle.version>
-        <spotbugs.version>4.8.5.0</spotbugs.version>
-        <jacoco.version>0.8.12</jacoco.version>
-    </properties>
 
     <build>
         <plugins>
@@ -44,130 +45,130 @@
                     </excludes>
                 </configuration>
             </plugin>
-
-            <!-- CHECKSTYLE плагин - теперь будет виден в Maven панели -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>${checkstyle.version}</version>
-                <configuration>
-                    <configLocation>checkstyle.xml</configLocation>
-                    <failOnViolation>true</failOnViolation>
-                    <logViolationsToConsole>true</logViolationsToConsole>
-                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                    <sourceDirectories>
-                        <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
-                    </sourceDirectories>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>checkstyle</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <phase>compile</phase>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.puppycrawl.tools</groupId>
-                        <artifactId>checkstyle</artifactId>
-                        <version>10.17.0</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-
-            <plugin>
-                <groupId>com.github.spotbugs</groupId>
-                <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>${spotbugs.version}</version>
-                <configuration>
-                    <effort>Max</effort>
-                    <threshold>High</threshold>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>spotbugs</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <phase>compile</phase>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- JACOCO плагин -->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco.version}</version>
-                <configuration>
-                    <output>file</output>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>jacoco-initialize</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>jacoco-check</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <rule>
-                                    <element>BUNDLE</element>
-                                    <limits>
-                                        <limit>
-                                            <counter>INSTRUCTION</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.01</minimum>
-                                        </limit>
-                                        <limit>
-                                            <counter>LINE</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.9</minimum>
-                                        </limit>
-                                        <limit>
-                                            <counter>BRANCH</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.6</minimum>
-                                        </limit>
-                                        <limit>
-                                            <counter>COMPLEXITY</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.6</minimum>
-                                        </limit>
-                                        <limit>
-                                            <counter>METHOD</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.7</minimum>
-                                        </limit>
-                                        <limit>
-                                            <counter>CLASS</counter>
-                                            <value>MISSEDCOUNT</value>
-                                            <maximum>1</maximum>
-                                        </limit>
-                                    </limits>
-                                </rule>
-                            </rules>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>jacoco-report</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <systemPropertyVariables>
+                            <spring.profiles.active>test</spring.profiles.active>
+                        </systemPropertyVariables>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>3.1.2</version>
+                    <configuration>
+                        <configLocation>checkstyle.xml</configLocation>
+                        <failOnViolation>true</failOnViolation>
+                        <logViolationsToConsole>true</logViolationsToConsole>
+                        <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                            <phase>compile</phase>
+                        </execution>
+                    </executions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.puppycrawl.tools</groupId>
+                            <artifactId>checkstyle</artifactId>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs-maven-plugin</artifactId>
+                    <version>4.8.5.0</version>
+                    <configuration>
+                        <effort>Max</effort>
+                        <threshold>High</threshold>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.8.12</version>
+                    <configuration>
+                        <output>file</output>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>jacoco-initialize</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>jacoco-check</id>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <rule>
+                                        <element>BUNDLE</element>
+                                        <limits>
+                                            <limit>
+                                                <counter>INSTRUCTION</counter>
+                                                <value>COVEREDRATIO</value>
+                                                <minimum>0.01</minimum>
+                                            </limit>
+                                            <limit>
+                                                <counter>LINE</counter>
+                                                <value>COVEREDRATIO</value>
+                                                <minimum>0.9</minimum>
+                                            </limit>
+                                            <limit>
+                                                <counter>BRANCH</counter>
+                                                <value>COVEREDRATIO</value>
+                                                <minimum>0.6</minimum>
+                                            </limit>
+                                            <limit>
+                                                <counter>COMPLEXITY</counter>
+                                                <value>COVEREDRATIO</value>
+                                                <minimum>0.6</minimum>
+                                            </limit>
+                                            <limit>
+                                                <counter>METHOD</counter>
+                                                <value>COVEREDRATIO</value>
+                                                <minimum>0.7</minimum>
+                                            </limit>
+                                            <limit>
+                                                <counter>CLASS</counter>
+                                                <value>MISSEDCOUNT</value>
+                                                <maximum>1</maximum>
+                                            </limit>
+                                        </limits>
+                                    </rule>
+                                </rules>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>jacoco-report</id>
+                            <phase>test</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
-
     <profiles>
         <profile>
             <id>check</id>
@@ -176,27 +177,21 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-checkstyle-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>check</goal>
-                                </goals>
-                            </execution>
-                        </executions>
                     </plugin>
                     <plugin>
                         <groupId>com.github.spotbugs</groupId>
                         <artifactId>spotbugs-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>check</goal>
-                                </goals>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </reporting>
         </profile>
         <profile>
             <id>coverage</id>
@@ -210,4 +205,5 @@
             </build>
         </profile>
     </profiles>
+
 </project>

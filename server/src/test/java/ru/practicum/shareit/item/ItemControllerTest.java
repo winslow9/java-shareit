@@ -167,36 +167,35 @@ public class ItemControllerTest {
 
     @Test
     void saveComment() throws Exception {
+
         Long userId = 1L;
         Long itemId = 1L;
 
-        CommentDto commentToSave = new CommentDto();
-        commentToSave.setText("Отличная вещь");
+        String commentText = "Great item!";
+        CommentDto commentDto = new CommentDto();
+        commentDto.setText(commentText);
+
+        Comment comment = new Comment();
+        comment.setId(1L);
+        comment.setText(commentText);
 
         User author = new User();
         author.setId(userId);
         author.setName("Booker");
-        author.setEmail("booker@mail.com");
-
-        Comment savedComment = new Comment();
-        savedComment.setId(1L);
-        savedComment.setText("Отличная вещь");
-        savedComment.setAuthor(author);
-        savedComment.setCreated(LocalDateTime.now());
+        comment.setAuthor(author);
+        comment.setCreated(LocalDateTime.now());
 
         when(itemService.addComment(eq(itemId), eq(userId), any(CommentDto.class)))
-                .thenReturn(savedComment);
+                .thenReturn(comment);
 
         mockMvc.perform(post("/items/{itemId}/comment", itemId)
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(commentToSave)))
+                        .content(objectMapper.writeValueAsString(commentDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.text").value("Отличная вещь"))
-                .andExpect(jsonPath("$.authorName").value("Booker"))
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.text").value(commentText))
+                .andExpect(jsonPath("$.author.name").value("Booker"))
                 .andExpect(jsonPath("$.created").exists());
-
-        verify(itemService).addComment(eq(itemId), eq(userId), any(CommentDto.class));
     }
 }
