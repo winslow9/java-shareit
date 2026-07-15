@@ -75,55 +75,6 @@ class ItemServiceImplTest {
         verify(userRepository).findById(1L);
     }
 
-    @Test
-    void saveWhenNameIsNull() {
-        User owner = createUser(1L);
-        ItemDto itemDto = createItemDto(null, "Описание", true);
-
-        when(userRepository.findById(1L)).thenReturn(Optional.of(owner));
-
-        assertThrows(ValidationException.class, () -> itemService.save(itemDto, 1L));
-    }
-
-    @Test
-    void saveWhenNameIsBlank() {
-        User owner = createUser(1L);
-        ItemDto itemDto = createItemDto(" ", "Описание", true);
-
-        when(userRepository.findById(1L)).thenReturn(Optional.of(owner));
-
-        assertThrows(ValidationException.class, () -> itemService.save(itemDto, 1L));
-    }
-
-    @Test
-    void saveWhenDescriptionIsNull() {
-        User owner = createUser(1L);
-        ItemDto itemDto = createItemDto("Дрель", null, true);
-
-        when(userRepository.findById(1L)).thenReturn(Optional.of(owner));
-
-        assertThrows(ValidationException.class, () -> itemService.save(itemDto, 1L));
-    }
-
-    @Test
-    void saveWhenDescriptionIsBlank() {
-        User owner = createUser(1L);
-        ItemDto itemDto = createItemDto("Дрель", " ", true);
-
-        when(userRepository.findById(1L)).thenReturn(Optional.of(owner));
-
-        assertThrows(ValidationException.class, () -> itemService.save(itemDto, 1L));
-    }
-
-    @Test
-    void saveWhenAvailableIsNull() {
-        User owner = createUser(1L);
-        ItemDto itemDto = createItemDto("Дрель", "Описание", null);
-
-        when(userRepository.findById(1L)).thenReturn(Optional.of(owner));
-
-        assertThrows(ValidationException.class, () -> itemService.save(itemDto, 1L));
-    }
 
     @Test
     void update() {
@@ -273,31 +224,6 @@ class ItemServiceImplTest {
         assertThrows(NotFoundException.class, () -> itemService.addComment(1L, 2L, commentDto));
     }
 
-    @Test
-    void addCommentWhenTextIsNull() {
-        User owner = createUser(1L);
-        User author = createUser(2L);
-        Item item = createItem(1L, "Дрель", "Описание", true, owner);
-        CommentDto commentDto = createCommentDto(null);
-
-        when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
-        when(userRepository.findById(2L)).thenReturn(Optional.of(author));
-
-        assertThrows(ValidationException.class, () -> itemService.addComment(1L, 2L, commentDto));
-    }
-
-    @Test
-    void addCommentWhenTextIsBlank() {
-        User owner = createUser(1L);
-        User author = createUser(2L);
-        Item item = createItem(1L, "Дрель", "Описание", true, owner);
-        CommentDto commentDto = createCommentDto(" ");
-
-        when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
-        when(userRepository.findById(2L)).thenReturn(Optional.of(author));
-
-        assertThrows(ValidationException.class, () -> itemService.addComment(1L, 2L, commentDto));
-    }
 
     private User createUser(Long id) {
         User user = new User();

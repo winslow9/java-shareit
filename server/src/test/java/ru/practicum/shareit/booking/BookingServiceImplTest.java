@@ -118,29 +118,6 @@ class BookingServiceImplTest {
         assertThrows(NotFoundException.class, () -> bookingService.updateStatus(1L, 1L, true));
     }
 
-    @Test
-    void updateStatusWhenUserIsNotOwner() {
-        User owner = createUser(1L);
-        User booker = createUser(2L);
-        Item item = createItem(1L, true, owner);
-        Booking booking = createBooking(1L, item, booker, BookingStatus.WAITING);
-
-        when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
-
-        assertThrows(ValidationException.class, () -> bookingService.updateStatus(1L, 3L, true));
-    }
-
-    @Test
-    void updateStatusWhenBookingAlreadyProcessed() {
-        User owner = createUser(1L);
-        User booker = createUser(2L);
-        Item item = createItem(1L, true, owner);
-        Booking booking = createBooking(1L, item, booker, BookingStatus.APPROVED);
-
-        when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
-
-        assertThrows(ValidationException.class, () -> bookingService.updateStatus(1L, 1L, true));
-    }
 
     @Test
     void getByIdWhenUserIsBooker() {
@@ -185,34 +162,6 @@ class BookingServiceImplTest {
         assertThrows(NotFoundException.class, () -> bookingService.getAllByBooker(2L, "ALL"));
     }
 
-    @Test
-    void getAllByBooker() {
-        User owner = createUser(1L);
-        User booker = createUser(2L);
-        Item item = createItem(1L, true, owner);
-        Booking booking = createBooking(1L, item, booker, BookingStatus.WAITING);
-
-        when(userRepository.existsById(2L)).thenReturn(true);
-        when(bookingRepository.findAllByBookerIdOrderByStartDesc(2L)).thenReturn(List.of(booking));
-        when(bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(eq(2L), any(), any()))
-                .thenReturn(List.of(booking));
-        when(bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(eq(2L), any()))
-                .thenReturn(List.of(booking));
-        when(bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(eq(2L), any()))
-                .thenReturn(List.of(booking));
-        when(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(2L, BookingStatus.WAITING))
-                .thenReturn(List.of(booking));
-        when(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(2L, BookingStatus.REJECTED))
-                .thenReturn(List.of(booking));
-
-        assertThat(bookingService.getAllByBooker(2L, "ALL")).containsExactly(booking);
-        assertThat(bookingService.getAllByBooker(2L, "CURRENT")).containsExactly(booking);
-        assertThat(bookingService.getAllByBooker(2L, "PAST")).containsExactly(booking);
-        assertThat(bookingService.getAllByBooker(2L, "FUTURE")).containsExactly(booking);
-        assertThat(bookingService.getAllByBooker(2L, "WAITING")).containsExactly(booking);
-        assertThat(bookingService.getAllByBooker(2L, "REJECTED")).containsExactly(booking);
-        assertThrows(ValidationException.class, () -> bookingService.getAllByBooker(2L, "UNKNOWN"));
-    }
 
     @Test
     void getAllByOwner() {

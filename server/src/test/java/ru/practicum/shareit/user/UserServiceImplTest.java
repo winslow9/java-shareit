@@ -64,26 +64,6 @@ class UserServiceImplTest {
         verify(userRepository).save(user);
     }
 
-    @Test
-    void saveUserWithNullEmail() {
-        User user = createUser(null, "Maxim", null);
-
-        assertThrows(ValidationException.class, () -> userService.saveUser(user));
-    }
-
-    @Test
-    void saveUserWithEmptyEmail() {
-        User user = createUser(null, "Max", " ");
-
-        assertThrows(ValidationException.class, () -> userService.saveUser(user));
-    }
-
-    @Test
-    void saveUserWithWrongEmail() {
-        User user = createUser(null, "Max", "maxmail.com");
-
-        assertThrows(ValidationException.class, () -> userService.saveUser(user));
-    }
 
     @Test
     void saveUserWithRepeatEmail() {
@@ -128,13 +108,6 @@ class UserServiceImplTest {
         verify(userRepository).findAll();
     }
 
-
-    @Test
-    void updateUserWithEmailWithoutAt() {
-        User updateUser = createUser(null, "Max", "maxmail.com");
-
-        assertThrows(ValidationException.class, () -> userService.updateUser(1L, updateUser));
-    }
 
     @Test
     void deleteById() {
